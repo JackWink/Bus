@@ -4,7 +4,7 @@ Bus is a small commandline script that pulls down and parses Ann Arbor's AATA cu
 
 ##Usage
 
-    jackmac: jackwink$ bus 2
+    jackmac:~ jackwink$ bus 2
     
     
     Direction             Arriving                        Location                       Next Stop   Time 
@@ -14,6 +14,10 @@ Bus is a small commandline script that pulls down and parses Ann Arbor's AATA cu
     From Downtown          On time            Blake Transit Center   Central Campus Transit Center   3:39
     From Downtown     3 min behind             Plymouth and Barton                   Plymouth Mall   3:30
     To Downtown            On time             Plymouth and Barton                     UMH Taubman   3:31
+    
+    
+	jackmac:~ jackwink$
+
 
 ##Dependencies
 
