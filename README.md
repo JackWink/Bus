@@ -4,7 +4,9 @@ Bus is a small commandline script that pulls down and parses Ann Arbor's AATA cu
 
 ##Usage
 
-    bus 2
+    jackmac: jackwink$ bus 2
+    
+    
     Direction             Arriving                        Location                       Next Stop   Time 
 
     -------------------------------------------------------------------------------------------------------
