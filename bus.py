@@ -1,7 +1,5 @@
-import requests
-import argparse
-import re
-import sys
+#!/usr/bin/env python
+import requests, argparse, re, sys
 
 def get_max_width(table, i):
     return max([len(row[i]) for row in table])
@@ -31,11 +29,6 @@ def print_table(out, table):
         print >> out
 
 def get_route_data(route):
-    """
-    outputs data in the following format:
-    "Direction", "Arriving", "Location", "Next Stop", "Time"
-    """
-
     # Get the routes
     r = requests.get("http://mobile.aata.org/rideguide_m.asp?route=" + str(route))
 
