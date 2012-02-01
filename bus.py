@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import requests
 import argparse
 import re
@@ -31,51 +30,64 @@ def print_table(out, table):
         
         print >> out
 
+def get_route_data(route):
+    """
+    outputs data in the following format:
+    "Direction", "Arriving", "Location", "Next Stop", "Time"
+    """
+
+    # Get the routes
+    r = requests.get("http://mobile.aata.org/rideguide_m.asp?route=" + str(route))
+
+    # parse them
+    try:
+        arr = r.content.split("<hr />")
+        routes = [['', '', '', '', ''] for x in range(len(arr) - 1) ]
+        routes[0] = ["Direction", "Arriving", "Location", "Next Stop", "Time"]
 
 
-
-# Get the route args
-parser = argparse.ArgumentParser(description='Display the current bus schedules')
-parser.add_argument('route', nargs=1, help='route you\'re trying to view')
-args = parser.parse_args()
-args.route[0] = args.route[0].upper()
-
-# Get the routes
-r = requests.get("http://mobile.aata.org/rideguide_m.asp?route=" + args.route[0])
-
-# parse them
-try:
-    arr = r.content.split("<hr />")
-    routes = [['', '', '', '', ''] for x in range(len(arr) - 1) ]
-    routes[0] = ["Direction", "Arriving", "Location", "Next Stop", "Time"]
+        # Regex to split the bus direction and time delay
+        r = re.compile('(On time|[0-9]+ min ahead|[0-9]+ min behind)')
 
 
-    # Regex to split the bus direction and time delay
-    r = re.compile('(On time|[0-9]+ min ahead|[0-9]+ min behind)')
+        for x in xrange(1, len(arr)-1):
+            temp = arr[x].split("<br />")
 
-
-    for x in xrange(1, len(arr)-1):
-        temp = arr[x].split("<br />")
-
-        # strip bus number and space
-        temp[0] = temp[0][4:]
+            # strip bus number and space
+            temp[0] = temp[0][4:]
         
-        # Split the direction and time delay
-        loc = r.split(temp[0])
-        routes[x][0] = loc[0] 
-        routes[x][1] = loc[1]
+            # Split the direction and time delay
+            loc = r.split(temp[0])
+            routes[x][0] = loc[0] 
+            routes[x][1] = loc[1]
 
-        # Strip the @ symbol
-        routes[x][2] = temp[1][2:]
+            # Strip the @ symbol
+            routes[x][2] = temp[1][2:]
 
-        # Split the arival time and next stop 
-        routes[x][4] = temp[2][-5:].strip()
-        routes[x][3] = temp[2][:-5].strip()
+            # Split the arival time and next stop 
+            routes[x][4] = temp[2][-5:].strip()
+            routes[x][3] = temp[2][:-5].strip()
 
+        return routes
+
+    except:
+        return None
+
+
+if __name__ == '__main__':
+    # Get the route args
+    parser = argparse.ArgumentParser(description='Display the current bus schedules')
+    parser.add_argument('route', nargs=1, help='route you\'re trying to view')
+    args = parser.parse_args()
+
+    data = get_route_data(args.route[0].upper())
+    
+    if not data:
+        print "Info for route " + args.route[0] + " is unavailable.";
+        exit()
 
     # Print the table
     out = sys.stdout
-    print_table(out, routes)
-    print "\n"
-except:
-    print "Info for route " + args.route[0] + " is unavailable.";
+    print_table(out, data)
+    print '\n'
+
